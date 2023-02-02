@@ -1,0 +1,147 @@
+import random
+
+board = []
+name = input("Please enter your name: ")
+
+
+for x in range(20):
+    board.append(["."] * 30)
+
+def print_board(board):
+    for row in board:
+        print(" ".join(row))
+
+print("Let's play Battlecrisis!")
+print_board(board)
+
+mine1 = [0,0]
+mine2 = [0,0]
+mine3 = [0,0]
+mine4 = [0,0]
+mine5 = [0,0]
+mine6 = [0,0]
+mine7 = [0,0]
+mine8 = [0,0]
+mine9 = [0,0]
+mine10 = [0,0]
+mine11 = [0,0]
+mine12 = [0,0]
+mine13 = [0,0]
+mine14 = [0,0]
+mine15 = [0,0]
+mine16 = [0,0]
+mine17 = [0,0]
+mine18 = [0,0]
+mine19 = [0,0]
+mine20 = [0,0]
+
+mines = []
+mines.append(mine1)
+mines.append(mine2)
+mines.append(mine3)
+mines.append(mine4)
+mines.append(mine5)
+mines.append(mine6)
+mines.append(mine7)
+mines.append(mine8)
+mines.append(mine9)
+mines.append(mine10)
+mines.append(mine11)
+mines.append(mine12)
+mines.append(mine13)
+mines.append(mine14)
+mines.append(mine15)
+mines.append(mine16)
+mines.append(mine17)
+mines.append(mine18)
+mines.append(mine19)
+mines.append(mine20)
+def create_mines():
+    for i in mines:
+        i[1] = random.randint(1,29)
+        i[0] = random.randint(1,19)
+create_mines()
+for i in mines:
+    print(i)
+
+for i in mines:
+    board[i[0]][i[1]] = "!"
+
+print_board(board)
+
+def random_row(board):
+    return random.randint(0, len(board) - 1)
+
+def random_col(board):
+    return random.randint(0, len(board[0]) - 1)
+
+def is_dead():
+    for i in mines:
+        if i[1] == x_pos and i[0] == y_pos:
+            print("Player 1 died!")
+        elif i[1] == x_pos and i[0] == y_pos:
+            print("player 2 died!")
+
+ship_row = random_row(board)
+ship_col = random_col(board)
+print("")
+x_pos = 5
+y_pos = 5
+x_pos2 = 6
+y_pos2 = 6
+for turn in range(100):
+    move = input("Which direction would Player 1 like to move (W,A,S,D): ")
+    if move == "W":
+        y_pos -= 1
+        board[y_pos][x_pos - 1] = "."
+        board[y_pos][x_pos] = "X"
+    if move == "A":
+        x_pos -= 1
+        board[y_pos +1][x_pos] = "."
+        board[y_pos][x_pos] = "X"
+    if move == "S":
+        y_pos += 1
+        board[y_pos][x_pos + 1] = "."
+        board[y_pos][x_pos] = "X"
+    if move == "D":
+        x_pos += 1
+        board[y_pos - 1][x_pos] = "."
+        board[y_pos][x_pos] = "X"
+
+    move2 = input("Which direction would Player 2 like to move (W,A,S,D): ")
+    if move2 == "W":
+        y_pos2 -= 1
+        board[y_pos2][x_pos2 - 1] = "."
+        board[y_pos2][x_pos2] = "O"
+    if move2 == "A":
+        x_pos2 -= 1
+        board[y_pos2 + 1][x_pos2] = "."
+        board[y_pos2][x_pos2] = "O"
+    if move2 == "S":
+        y_pos2 += 1
+        board[y_pos2][x_pos2 + 1] = "."
+        board[y_pos2][x_pos2] = "O"
+    if move2 == "D":
+        x_pos2 += 1
+        board[y_pos2 - 1][x_pos2] = "."
+        board[y_pos2][x_pos2] = "O"
+
+
+    print(f"Player 1 position: {x_pos}, {y_pos}.")
+    print(f"Player 2 position: {x_pos2}, {y_pos2}.")
+    is_dead()
+    #if guess_row == ship_row and guess_col == ship_col:
+    #    print("Congratulations! You sank my battleship!")
+    #    break
+    '''else:
+        if (guess_row < 0 or guess_row > 20) or (guess_col < 0 or guess_col > 20):
+            print("Oops, that's not even in the ocean.")
+        elif(board[guess_row][guess_col] == "X"):
+            print("You guessed that one already.")
+        else:
+            print("You missed my battleship!")
+            board[guess_row][guess_col] = "X"'''
+    if (turn == 100):
+        print("Game Over")
+    print("Turn", turn + 1)
+    print_board(board)
