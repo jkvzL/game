@@ -1,12 +1,14 @@
 import random
 from time import sleep
 
+# Someone please add comments to this, im too lazy to do it myself.
+
 board = []
 
 print("Welcome to Battlecrisis!\n")
 
-p1name = input("Player 1, please enter your name: ")
-p2name = input("Player 2, please enter your name: ")
+p1name = input("Player 1, please enter your name: ").capitalize()
+p2name = input("Player 2, please enter your name: ").capitalize()
 sleep(0.5)
 
 for x in range(20):
