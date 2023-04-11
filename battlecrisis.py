@@ -1,18 +1,12 @@
 import random
 from time import sleep
 
-# Someone please add comments to this, im too lazy to do it myself.
-
 board = []
 
-print("Welcome to Battlecrisis!\n")
+#f = open("highscores.txt", "a")
 
-p1name = input("Player 1, please enter your name: ").capitalize()
-p2name = input("Player 2, please enter your name: ").capitalize()
-sleep(0.5)
-
-for x in range(20):
-    board.append(["."] * 30)
+for x in range(10):
+    board.append(["."] * 10)
 
 def print_board(board):
     for row in board:
@@ -20,100 +14,161 @@ def print_board(board):
 
 #print_board(board)
 
-mines = [[0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], ]
+mines = [[0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0]]
 
 def create_mines():
     for i in mines:
-        i[1] = random.randint(1,29)
-        i[0] = random.randint(1,19)
-
-create_mines()
+        i[1] = random.randint(1,9)
+        i[0] = random.randint(1,9)
 
 # Remove this later
 #for i in mines:
 #    print(i)
 
-for i in mines:
-    board[i[0]][i[1]] = "!"
+def GetNames(mode):
+    if mode == "2":
+        p1 = input("Player 1, please enter your name: ")
+        return p1
+    else:
+        p1 = input("Player 1, please enter your name: ")
+        p2 = input("Player 2, please enter your name: ")
+        return p1, p2
+
+#for i in mines:
+#    board[i[0]][i[1]] = "!"
 
 #print_board(board)
 
-def is_dead(P1DEAD, P2DEAD, x1, x2, y1, y2):
+def is_dead(x1, x2, y1, y2, p1name, p2name):
+    P1DEAD = "F"
+    P2DEAD = "F"
     for i in mines:
         if i[1] == x1 and i[0] == y1:
             print(f"{p1name} died!")
-            P1DEAD = True
+            P1DEAD = "T"
         if i[1] == x2 and i[0] == y2:
             print(f"{p2name} died!")
-            P2DEAD = True
+            P2DEAD = "T"
+    return P1DEAD, P2DEAD
+
+def DisplayMenu():
+    menuChoice = ""
+    modeChoice = ""
+    choice = 0
+    gamemode = 0
+
+    while menuChoice != "1" and menuChoice != "2" and menuChoice != "3":
+        while menuChoice != "1" and menuChoice != "3":
+            print("1) Play\n2) Rules\n3) Quit")
+
+            menuChoice = input("Please make a selection (1,2,3): ")
+            if menuChoice == "1": # User has selected "play"
+                print("Okay, let's play!\n")
+                print("A) Multiplayer\nB) Computer\n")
+                while modeChoice != "A" and modeChoice != "B":
+                    modeChoice = input("Please select a game mode: ").upper()
+                    if modeChoice == "A":
+                        gamemode = "1"
+                        return gamemode
+                    elif modeChoice == "B":
+                        gamemode = "2"
+                        return gamemode
+                    else:
+                        print("Please select either A or B.")
+            elif menuChoice == "2": # User has selected "rules"
+                print("-"*20)
+                print("\nHow to Play\n")
+                print("Move using W, A, S, and D.")
+                print("Each player controls one character, and either plays against another player, or against the computer.")
+                print("Choose option 1 for multiplayer, or option 2 for computer.")
+                print("\nReach the other side first while avoiding mines to win.")
+                print("If you step on a mine, the game is over.")
+                print("Good luck!\n")
+                print("-"*20, "\n")
+            elif menuChoice == "3":
+                print("Thank you for playing!")
+                quit()
+            
+            
+
+    
+
+    
 
 
 def main():
+    mode = 0
+    create_mines()
+    for i in mines:
+        board[i[0]][i[1]] = "!"
+    for i in mines:
+        print(i)
+    
+    print("Welcome to BattleCrisis!")
 
-    print("-"*20)
-    print("\nHow to Play\n")
-    print("Move using W, A, S, and D.")
-    print("Each player controls one character, and either plays against another player, or against the computer.")
-    print("Choose option 1 for multiplayer, or option 2 for computer.")
-    print("\nReach the other side first while avoiding mines to win.")
-    print("If you step on a mine, the game is over.")
-    print("Good luck!\n")
-    print("-"*20, "\n")
+    mode = DisplayMenu()
 
-
-    mode = input("Which mode would you like to play? ")
+    if mode == "1":
+        p1name, p2name = GetNames(mode)
+    else:
+        p1name = GetNames(mode)
+    
     if mode == "2":
-        pass
+        print("Computer play coming soon!")
     elif mode == "1":
         x_pos = 1
         y_pos = 5
         x_pos2 = 1
         y_pos2 = 6
 
-        P1DEAD = False
-        P2DEAD = False
+        P1DEAD = "F"
+        P2DEAD = "F"
 
-        while not P1DEAD and not P2DEAD:
-            move = input(f"{p1name}, which direction would you like to move? ")
-            if move == "W":
-                board[x_pos][y_pos] = "."
-                y_pos -= 1
-                board[y_pos][x_pos] = "X"
-            elif move == "A":
-                board[x_pos][y_pos] = "."
-                x_pos -= 1
-                board[y_pos][x_pos] = "X"
-            elif move == "S":
-                board[x_pos][y_pos] = "."
-                y_pos += 1
-                board[y_pos][x_pos] = "X"
-            elif move == "D":
-                board[x_pos][y_pos] = "."
-                x_pos += 1
-                board[y_pos][x_pos] = "X"
+        while P1DEAD == "F" or P2DEAD == "F":
+            if P1DEAD == "F":
+                move = input(f"{p1name}, which direction would you like to move? ")
+                if move == "W":
+                    board[x_pos][y_pos] = "."
+                    y_pos -= 1
+                    board[y_pos][x_pos] = "X"
+                elif move == "A":
+                    board[x_pos][y_pos] = "."
+                    x_pos -= 1
+                    board[y_pos][x_pos] = "X"
+                elif move == "S":
+                    board[x_pos][y_pos] = "."
+                    y_pos += 1
+                    board[y_pos][x_pos] = "X"
+                elif move == "D":
+                    board[x_pos][y_pos] = "."
+                    x_pos += 1
+                    board[y_pos][x_pos] = "X"
+            if P2DEAD == "F":
+                move2 = input(f"{p2name}, which direction would you like to move? ")
+                if move2 == "W":
+                    board[x_pos2][y_pos2] = "."
+                    y_pos2 -= 1
+                    board[y_pos2][x_pos2] = "O"
+                elif move2 == "A":
+                    board[x_pos2][y_pos2] = "."
+                    x_pos2 -= 1
+                    board[y_pos2][x_pos2] = "O"
+                elif move2 == "S":
+                    board[x_pos2][y_pos2] = "."
+                    y_pos2 += 1
+                    board[y_pos2][x_pos2] = "O"
+                elif move2 == "D":
+                    board[x_pos2][y_pos2] = "."
+                    x_pos2 += 1
+                    board[y_pos2][x_pos2] = "O"
 
-            move2 = input(f"{p2name}, which direction would you like to move? ")
-            if move2 == "W":
-                board[x_pos2][y_pos2] = "."
-                y_pos2 -= 1
-                board[y_pos2][x_pos2] = "O"
-            elif move2 == "A":
-                board[x_pos2][y_pos2] = "."
-                x_pos2 -= 1
-                board[y_pos2][x_pos2] = "O"
-            elif move2 == "S":
-                board[x_pos2][y_pos2] = "."
-                y_pos2 += 1
-                board[y_pos2][x_pos2] = "O"
-            elif move2 == "D":
-                board[x_pos2][y_pos2] = "."
-                x_pos2 += 1
-                board[y_pos2][x_pos2] = "O"
-
-
-            print(f"Player 1 position: {x_pos}, {y_pos}.")
-            print(f"Player 2 position: {x_pos2}, {y_pos2}.")
-            is_dead(P1DEAD, P2DEAD, x_pos, x_pos2, y_pos, y_pos2)
+            if P1DEAD == "F":
+                print(f"Player 1 position: {x_pos}, {y_pos}.")
+            if P2DEAD == "F":
+                print(f"Player 2 position: {x_pos2}, {y_pos2}.")
+            P1DEAD, P2DEAD = is_dead(x_pos, x_pos2, y_pos, y_pos2, p1name, p2name)
+            print(P1DEAD, P2DEAD)
             print_board(board)
 
 main()
+#f.close()
