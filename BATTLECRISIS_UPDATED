@@ -27,11 +27,11 @@ def create_mines():
 
 def GetNames(mode):
     if mode == "2":
-        p1 = input("Player 1, please enter your name: ")
+        p1 = input("Player 1, please enter your name: ").capitalize()
         return p1
     else:
-        p1 = input("Player 1, please enter your name: ")
-        p2 = input("Player 2, please enter your name: ")
+        p1 = input("Player 1, please enter your name: ").capitalize()
+        p2 = input("Player 2, please enter your name: ").capitalize()
         return p1, p2
 
 #for i in mines:
@@ -80,7 +80,7 @@ def DisplayMenu():
                 print("\nHow to Play\n")
                 print("Move using W, A, S, and D.")
                 print("Each player controls one character, and either plays against another player, or against the computer.")
-                print("Choose option 1 for multiplayer, or option 2 for computer.")
+                print("Choose option A for multiplayer, or option B for computer.")
                 print("\nReach the other side first while avoiding mines to win.")
                 print("If you step on a mine, the game is over.")
                 print("Good luck!\n")
@@ -97,78 +97,188 @@ def DisplayMenu():
 
 
 def main():
-    mode = 0
-    create_mines()
-    for i in mines:
-        board[i[0]][i[1]] = "!"
-    for i in mines:
-        print(i)
-    
-    print("Welcome to BattleCrisis!")
+    ROUND = 1
+    playAgain = "Y"
+    roundOver = "F"
 
-    mode = DisplayMenu()
+    while playAgain == "Y":
+        create_mines()
+        for i in mines:
+            board[i[0]][i[1]] = "!"
+        for i in mines:
+            print(i)
+            
+        if ROUND == 1:
+            p1score = p2score = mode = 0
+            print("Welcome to BattleCrisis!")
 
-    if mode == "1":
-        p1name, p2name = GetNames(mode)
-    else:
-        p1name = GetNames(mode)
-    
-    if mode == "2":
-        print("Computer play coming soon!")
-    elif mode == "1":
-        x_pos = 1
-        y_pos = 5
-        x_pos2 = 1
-        y_pos2 = 6
+            mode = DisplayMenu()
 
-        P1DEAD = "F"
-        P2DEAD = "F"
+            if mode == "1":
+                p1name, p2name = GetNames(mode)
+            else:
+                p1name = GetNames(mode)
+                p2name = "Computer"
+        
+        if mode == "2":
+            while roundOver == "F":
+                x_pos = 0
+                y_pos = 5
+                x_pos2 = 0
+                y_pos2 = 6
 
-        while P1DEAD == "F" or P2DEAD == "F":
-            if P1DEAD == "F":
-                move = input(f"{p1name}, which direction would you like to move? ")
-                if move == "W":
-                    board[x_pos][y_pos] = "."
-                    y_pos -= 1
-                    board[y_pos][x_pos] = "X"
-                elif move == "A":
-                    board[x_pos][y_pos] = "."
-                    x_pos -= 1
-                    board[y_pos][x_pos] = "X"
-                elif move == "S":
-                    board[x_pos][y_pos] = "."
-                    y_pos += 1
-                    board[y_pos][x_pos] = "X"
-                elif move == "D":
-                    board[x_pos][y_pos] = "."
-                    x_pos += 1
-                    board[y_pos][x_pos] = "X"
-            if P2DEAD == "F":
-                move2 = input(f"{p2name}, which direction would you like to move? ")
-                if move2 == "W":
-                    board[x_pos2][y_pos2] = "."
-                    y_pos2 -= 1
-                    board[y_pos2][x_pos2] = "O"
-                elif move2 == "A":
-                    board[x_pos2][y_pos2] = "."
-                    x_pos2 -= 1
-                    board[y_pos2][x_pos2] = "O"
-                elif move2 == "S":
-                    board[x_pos2][y_pos2] = "."
-                    y_pos2 += 1
-                    board[y_pos2][x_pos2] = "O"
-                elif move2 == "D":
-                    board[x_pos2][y_pos2] = "."
-                    x_pos2 += 1
-                    board[y_pos2][x_pos2] = "O"
+                P1DEAD = "F"
+                P2DEAD = "F"
 
-            if P1DEAD == "F":
-                print(f"Player 1 position: {x_pos}, {y_pos}.")
-            if P2DEAD == "F":
-                print(f"Player 2 position: {x_pos2}, {y_pos2}.")
-            P1DEAD, P2DEAD = is_dead(x_pos, x_pos2, y_pos, y_pos2, p1name, p2name)
-            print(P1DEAD, P2DEAD)
-            print_board(board)
+                print("-"*30)
+                print(f"\nRound {ROUND}\n")
+                print("-"*30)
+
+                while P1DEAD == "F" or P2DEAD == "F" or roundOver == "F":
+                    if P1DEAD == "F":
+                        move = input(f"{p1name}, which direction would you like to move? ")
+                        if move == "W":
+                            board[x_pos][y_pos] = "."
+                            y_pos -= 1
+                            board[y_pos][x_pos] = "X"
+                        elif move == "A":
+                            board[x_pos][y_pos] = "."
+                            x_pos -= 1
+                            board[y_pos][x_pos] = "X"
+                        elif move == "S":
+                            board[x_pos][y_pos] = "."
+                            y_pos += 1
+                            board[y_pos][x_pos] = "X"
+                        elif move == "D":
+                            board[x_pos][y_pos] = "."
+                            x_pos += 1
+                            board[y_pos][x_pos] = "X"
+                            
+                        if x_pos >= 9:
+                            print(f"{p1name} reached the end first!")
+                            roundOver = "T"
+                            p1score += 1
+                            
+                    if P2DEAD == "F":
+                        direc = random.randint(1,4)
+                        if direc == 1:
+                            move2 = "W"
+                        elif direc == 2:
+                            move2 = "A"
+                        elif direc == 3:
+                            move2 = "S"
+                        else:
+                            move2 = "D"
+                        print(f"Computer chose: {move2}")
+                        if move2 == "W":
+                            board[x_pos2][y_pos2] = "."
+                            y_pos2 -= 1
+                            board[y_pos2][x_pos2] = "O"
+                        elif move2 == "A":
+                            board[x_pos2][y_pos2] = "."
+                            x_pos2 -= 1
+                            board[y_pos2][x_pos2] = "O"
+                        elif move2 == "S":
+                            board[x_pos2][y_pos2] = "."
+                            y_pos2 += 1
+                            board[y_pos2][x_pos2] = "O"
+                        elif move2 == "D":
+                            board[x_pos2][y_pos2] = "."
+                            x_pos2 += 1
+                            board[y_pos2][x_pos2] = "O"
+                            
+                        if x_pos2 >= 9:
+                            print(f"{p2name} reached the end first!")
+                            roundOver = "T"
+                            p2score += 1
+
+                    if P1DEAD == "F":
+                        print(f"Player 1 position: {x_pos}, {y_pos}.")
+                    if P2DEAD == "F":
+                        print(f"Player 2 position: {x_pos2}, {y_pos2}.")
+                    P1DEAD, P2DEAD = is_dead(x_pos, x_pos2, y_pos, y_pos2, p1name, p2name)
+                    print(P1DEAD, P2DEAD)
+                    print_board(board)
+        elif mode == "1":
+            while roundOver == "F":
+                x_pos = 1
+                y_pos = 5
+                x_pos2 = 1
+                y_pos2 = 6
+
+                P1DEAD = "F"
+                P2DEAD = "F"
+
+                print("-"*30)
+                print(f"\nRound {ROUND}\n")
+                print("-"*30)
+
+                while P1DEAD == "F" or P2DEAD == "F" or roundOver == "F":
+                    if P1DEAD == "F":
+                        move = input(f"{p1name}, which direction would you like to move? ")
+                        if move == "W":
+                            board[x_pos][y_pos] = "."
+                            y_pos -= 1
+                            board[y_pos][x_pos] = "X"
+                        elif move == "A":
+                            board[x_pos][y_pos] = "."
+                            x_pos -= 1
+                            board[y_pos][x_pos] = "X"
+                        elif move == "S":
+                            board[x_pos][y_pos] = "."
+                            y_pos += 1
+                            board[y_pos][x_pos] = "X"
+                        elif move == "D":
+                            board[x_pos][y_pos] = "."
+                            x_pos += 1
+                            board[y_pos][x_pos] = "X"
+                            
+                        if x_pos2 >= 9:
+                            print(f"{p1name} reached the end first!")
+                            roundOver = "T"
+                            p1score += 1
+                            
+                    if P2DEAD == "F":
+                        move2 = input(f"{p2name}, which direction would you like to move? ")
+                        if move2 == "W":
+                            board[x_pos2][y_pos2] = "."
+                            y_pos2 -= 1
+                            board[y_pos2][x_pos2] = "O"
+                        elif move2 == "A":
+                            board[x_pos2][y_pos2] = "."
+                            x_pos2 -= 1
+                            board[y_pos2][x_pos2] = "O"
+                        elif move2 == "S":
+                            board[x_pos2][y_pos2] = "."
+                            y_pos2 += 1
+                            board[y_pos2][x_pos2] = "O"
+                        elif move2 == "D":
+                            board[x_pos2][y_pos2] = "."
+                            x_pos2 += 1
+                            board[y_pos2][x_pos2] = "O"
+
+                        if x_pos2 >= 9:
+                            print(f"{p2name} reached the end first!")
+                            roundOver = "T"
+                            p2score += 1
+                            
+                    if P1DEAD == "F":
+                        print(f"Player 1 position: {x_pos}, {y_pos}.")
+                    if P2DEAD == "F":
+                        print(f"Player 2 position: {x_pos2}, {y_pos2}.")
+                    P1DEAD, P2DEAD = is_dead(x_pos, x_pos2, y_pos, y_pos2, p1name, p2name)
+                    print(P1DEAD, P2DEAD)
+                    print_board(board)
+            while playAgain != "Y" and playAgain != "N":
+                playAgain = input("Would you like to play again (y/n)? ").upper()
+                if playAgain == "Y":
+                    roundOver = "F"
+                    ROUND += 1
+                elif playAgain == "N":
+                    print("\nThank you for playing!")
+                else:
+                    print("Please choose either Y or N")
+                
 
 main()
 #f.close()
