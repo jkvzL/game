@@ -1,30 +1,42 @@
-import random
-from time import sleep
+# Kai and Drew
+# April 19, 2023
+# Battlecrisis
 
+# Import libraries
+import random
+from time import sleep as s
+
+# Initialize board as an empty list
 board = []
 
-#f = open("highscores.txt", "a")
+# Function to create the blank board, which is 10x10
+# Takes no parameters, returns nothing
+def create_board():
+    for x in range(10):
+        board.append(["."] * 10)
 
-for x in range(10):
-    board.append(["."] * 10)
-
+# Function to print the current board
+# Takes the board (list) as a parameter, returns nothing
 def print_board(board):
     for row in board:
         print(" ".join(row))
 
-#print_board(board)
+# Initialize the list for the mines, empty
+mines = [] # BASE 10 MINES
 
-mines = [[0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0]]
+def init_mines(num):
+    for i in range(num):
+        mines.append([0,0])
 
+# Function to assign random coordinates to all of the mines
+# Takes no parameters, returns nothing
 def create_mines():
     for i in mines:
-        i[1] = random.randint(1,9)
-        i[0] = random.randint(1,9)
+        i[1] = random.randint(2, 8)
+        i[0] = random.randint(1, 9)
 
-# Remove this later
-#for i in mines:
-#    print(i)
-
+# Function to get the names of the players, either one or both, depending on which gamemode is chosen
+# Takes 1 parameter for gamemode (str), returns the names of the players
 def GetNames(mode):
     if mode == "2":
         p1 = input("Player 1, please enter your name: ").capitalize()
@@ -34,12 +46,10 @@ def GetNames(mode):
         p2 = input("Player 2, please enter your name: ").capitalize()
         return p1, p2
 
-#for i in mines:
-#    board[i[0]][i[1]] = "!"
-
-#print_board(board)
-
+# Function to determine if the player is standing on a mine, which means that the player is dead.
+# Takes 4 int parameters for x and y coords of players, and takes 2 str parameters for names of players.
 def is_dead(x1, x2, y1, y2, p1name, p2name):
+    # Initlalize variables
     P1DEAD = "F"
     P2DEAD = "F"
     for i in mines:
@@ -51,21 +61,49 @@ def is_dead(x1, x2, y1, y2, p1name, p2name):
             P2DEAD = "T"
     return P1DEAD, P2DEAD
 
+# Function to set the difficulty for the game (AKA the number of mines present on the board)
+# Takes 1 parameter for player 1 name, returns nothing
+def set_difficulty(p1name):
+    difficulty = ""
+    print("\nChoose a difficulty:")
+    print("A) Easy\nB) Medium\nC) Hard\n")
+
+    while difficulty != "A" and difficulty != "B" and difficulty != "C":
+        difficulty = input(f"{p1name}, please make a selection: ").upper()
+        if difficulty == "A":
+            return 3
+        elif difficulty == "B":
+            return 6
+        elif difficulty == "C":
+            return 10
+        else:
+            print("Please choose A, B, or C.")
+
+
+# Function to display the menu, and dispay other things depending on which option the user chooses
+# Takes no parameters, returns the gamemode chosen by the player
 def DisplayMenu():
-    menuChoice = ""
-    modeChoice = ""
-    choice = 0
-    gamemode = 0
-
-    while menuChoice != "1" and menuChoice != "2" and menuChoice != "3":
+    # Initlalize variables
+    menuChoice = modeChoice = scoreChoice = ""
+    choice = gamemode = 0
+    # Loop until user has chosen a valid item on the list
+    while menuChoice != "1" and menuChoice != "2" and menuChoice != "3" and menuChoice != "4":
+        # Loop until user has chosen play or quit
         while menuChoice != "1" and menuChoice != "3":
-            print("1) Play\n2) Rules\n3) Quit")
+            # Display menu
+            print("\n1) Play\n2) Rules\n3) Quit\n4) View Highscores\n")
+            # Re-initialize variables
+            menuChoice = modeChoice = scoreChoice = ""
+            choice = gamemode = 0
 
-            menuChoice = input("Please make a selection (1,2,3): ")
-            if menuChoice == "1": # User has selected "play"
+            # Prompt user for menu choice
+            menuChoice = input("Please make a selection (1,2,3,4): ")
+            if menuChoice == "1":  # User has selected "play"
                 print("Okay, let's play!\n")
                 print("A) Multiplayer\nB) Computer\n")
+                # Loop until user has chosen valid game mode
                 while modeChoice != "A" and modeChoice != "B":
+                    # Prompt user for game mode
                     modeChoice = input("Please select a game mode: ").upper()
                     if modeChoice == "A":
                         gamemode = "1"
@@ -75,210 +113,411 @@ def DisplayMenu():
                         return gamemode
                     else:
                         print("Please select either A or B.")
-            elif menuChoice == "2": # User has selected "rules"
-                print("-"*20)
+            elif menuChoice == "2":  # User has selected "rules"
+                # If user selects rules, display the rules
+                print("-" * 20)
                 print("\nHow to Play\n")
                 print("Move using W, A, S, and D.")
-                print("Each player controls one character, and either plays against another player, or against the computer.")
+                print(
+                    "Each player controls one character, and either plays against another player, or against the "
+                    "computer.")
                 print("Choose option A for multiplayer, or option B for computer.")
                 print("\nReach the other side first while avoiding mines to win.")
                 print("If you step on a mine, the game is over.")
                 print("Good luck!\n")
-                print("-"*20, "\n")
+                print("-" * 20, "\n")
+            # If user selects quit, exit the program
             elif menuChoice == "3":
                 print("Thank you for playing!")
                 quit()
-            
-            
+            elif menuChoice == "4": # User has selected highscores
+                while scoreChoice != "1" and scoreChoice != "2":
+                    # Display menu of choices
+                    print("\n1) View All\n2) View Top\n")
+                    scoreChoice = input("Please make a selection: ")
+                    if scoreChoice == "1":
+                        # If user selects "view recent" display all highscores
+                        with open("highscores.txt", "r") as f:
+                            print()
+                            for line in f.readlines():
+                                data = line.split(",")
+                                print(f"{data[0]}: {str(data[1].strip())} pts.")
+                                s(0.25)
+                    # If user selects "view top" show only the top 3 highscores
+                    elif scoreChoice == "2":
+                        top3 = [["Test",2], ["Test",0]]
+                        with open("highscores.txt", "r") as f:
+                            for line in f.readlines():
+                                data = line.split(",")
+                                data[1] = int(data[1])
+                                for i in range(len(top3)):
+                                    if int(data[1]) >= int(top3[i][1]):
+                                        top3.insert(i, data)
+                                        break
+                                    else:
+                                        top3.append(data)
+                            print()
+                            for i in range(3):
+                                print(f"{i+1}) {top3[i][0]}: {top3[i][1]} pts.")
+                                s(0.3)
+                    else:
+                        print("Please choose 1 or 2.")
 
-    
 
-    
-
-
+# Define main function
 def main():
+    # Initialize variables
     ROUND = 1
     playAgain = "Y"
     roundOver = "F"
 
     while playAgain == "Y":
+        # Create the board
+        create_board()
+        roundOver = "F"
+        P1DEAD = "F"
+        P2DEAD = "F"
         create_mines()
-        for i in mines:
-            board[i[0]][i[1]] = "!"
-        for i in mines:
-            print(i)
-            
+        #
+        # Remove this later, this is only for testing purposes.
+        #
+        #for i in mines:
+        #    board[i[0]][i[1]] = "!"
+        #for i in mines:
+        #    print(i)
+
         if ROUND == 1:
+            # Initialize variables
             p1score = p2score = mode = 0
+
+            # Greet user
             print("Welcome to BattleCrisis!")
 
             mode = DisplayMenu()
 
+            # If user chose multiplayer, prompt both users for names
             if mode == "1":
                 p1name, p2name = GetNames(mode)
+            # If user chose computer, ask singular user for name
             else:
                 p1name = GetNames(mode)
                 p2name = "Computer"
-        
+
+            difficulty = set_difficulty(p1name)
+            init_mines(difficulty)
+            create_mines()
+            #for i in mines:
+            #    board[i[0]][i[1]] = "!"
+
+        # If user chose computer, play the game against the computer
+
+
         if mode == "2":
-            while roundOver == "F":
-                x_pos = 0
-                y_pos = 5
-                x_pos2 = 0
-                y_pos2 = 6
+            started = False
+            # Loop until the round is over
+            while P1DEAD == "F" and roundOver == "F":
+                if not started:
+                    # Initialize variables
+                    x_pos = 0
+                    y_pos = 3
+                    x_pos2 = 0
+                    y_pos2 = 7
+                    point_awarded = False
+                    point_awarded2 = False
+                    BORDER_W = BORDER_N = 0
+                    BORDER_S = BORDER_E = 9
 
-                P1DEAD = "F"
-                P2DEAD = "F"
+                    # Print current round, as well as each player's points
+                    print("-" * 30)
+                    print(f"\nRound {ROUND}\n")
+                    print(f"{p1name}: {p1score} pts.")
+                    print(f"{p2name}: {p2score} pts.")
+                    print("-" * 30)
+                    started = True
 
-                print("-"*30)
-                print(f"\nRound {ROUND}\n")
-                print("-"*30)
-
-                while P1DEAD == "F" or P2DEAD == "F" or roundOver == "F":
-                    if P1DEAD == "F":
-                        move = input(f"{p1name}, which direction would you like to move? ")
+                # Check if player is alive before asking for input
+                # Ask user for direction to move, and loop until a valid move is chosen
+                if P1DEAD == "F":
+                    moved = False
+                    while not moved:
+                        move = input(f"{p1name}, which direction would you like to move? ").upper()
                         if move == "W":
-                            board[x_pos][y_pos] = "."
-                            y_pos -= 1
-                            board[y_pos][x_pos] = "X"
+                            if y_pos > BORDER_N:
+                                board[x_pos][y_pos] = "."
+                                y_pos -= 1
+                                board[y_pos][x_pos] = "X"
+                                moved = True
+                            else:
+                                print("You're at the edge of the board!'")
                         elif move == "A":
-                            board[x_pos][y_pos] = "."
-                            x_pos -= 1
-                            board[y_pos][x_pos] = "X"
+                            if x_pos > BORDER_W:
+                                board[x_pos][y_pos] = "."
+                                x_pos -= 1
+                                board[y_pos][x_pos] = "X"
+                                moved = True
+                            else:
+                                print("You're at the edge of the board!'")
                         elif move == "S":
-                            board[x_pos][y_pos] = "."
-                            y_pos += 1
-                            board[y_pos][x_pos] = "X"
+                            if y_pos < BORDER_S:
+                                board[x_pos][y_pos] = "."
+                                y_pos += 1
+                                board[y_pos][x_pos] = "X"
+                                moved = True
+                            else:
+                                print("You're at the edge of the board!'")
                         elif move == "D":
-                            board[x_pos][y_pos] = "."
-                            x_pos += 1
-                            board[y_pos][x_pos] = "X"
-                            
-                        if x_pos >= 9:
-                            print(f"{p1name} reached the end first!")
-                            roundOver = "T"
-                            p1score += 1
-                            
-                    if P2DEAD == "F":
-                        direc = random.randint(1,4)
-                        if direc == 1:
-                            move2 = "W"
-                        elif direc == 2:
-                            move2 = "A"
-                        elif direc == 3:
-                            move2 = "S"
+                            if x_pos < BORDER_E:
+                                board[x_pos][y_pos] = "."
+                                x_pos += 1
+                                board[y_pos][x_pos] = "X"
+                                moved = True
+                            else:
+                                print("You're at the edge of the board!'")
+
+                # Check if computer is alive, and if it is close to a mine
+                if P2DEAD == "F":
+                    closeToMine2 = False
+                    for i in mines:
+                        if abs(i[1] - x_pos2) <= 1:
+                            if abs(i[0] - y_pos2) <= 1:
+                                closeToMine2 = True
+                    moved = False
+                    # If computer is not near a mine, move to the right. Otherwise,
+                    # move in a random direction.
+                    while not moved:
+                        if not closeToMine2 and x_pos <= 9:
+                            direc = 4
                         else:
-                            move2 = "D"
-                        print(f"Computer chose: {move2}")
-                        if move2 == "W":
-                            board[x_pos2][y_pos2] = "."
-                            y_pos2 -= 1
-                            board[y_pos2][x_pos2] = "O"
-                        elif move2 == "A":
-                            board[x_pos2][y_pos2] = "."
-                            x_pos2 -= 1
-                            board[y_pos2][x_pos2] = "O"
-                        elif move2 == "S":
-                            board[x_pos2][y_pos2] = "."
-                            y_pos2 += 1
-                            board[y_pos2][x_pos2] = "O"
-                        elif move2 == "D":
+                            direc = random.randint(1,4)
+                        if direc == 1:
+                            if y_pos > BORDER_N:
+                                s(0.1)
+                                print("Computer chose: 'W'")
+                                board[x_pos2][y_pos2] = "."
+                                y_pos2 -= 1
+                                board[y_pos2][x_pos2] = "O"
+                                moved = True
+                        elif direc == 2:
+                            if x_pos > BORDER_W:
+                                s(0.1)
+                                print("Computer chose: 'A'")
+                                board[x_pos2][y_pos2] = "."
+                                x_pos2 -= 1
+                                board[y_pos2][x_pos2] = "O"
+                                moved = True
+                        elif direc == 3:
+                            if y_pos < BORDER_S:
+                                s(0.1)
+                                print("Computer chose: 'S'")
+                                board[x_pos2][y_pos2] = "."
+                                y_pos2 += 1
+                                board[y_pos2][x_pos2] = "O"
+                                moved = True
+                        elif direc == 4:
+                            s(0.1)
+                            print("Computer chose: 'D'")
                             board[x_pos2][y_pos2] = "."
                             x_pos2 += 1
                             board[y_pos2][x_pos2] = "O"
-                            
-                        if x_pos2 >= 9:
-                            print(f"{p2name} reached the end first!")
-                            roundOver = "T"
-                            p2score += 1
+                            moved = True
 
-                    if P1DEAD == "F":
-                        print(f"Player 1 position: {x_pos}, {y_pos}.")
-                    if P2DEAD == "F":
-                        print(f"Player 2 position: {x_pos2}, {y_pos2}.")
-                    P1DEAD, P2DEAD = is_dead(x_pos, x_pos2, y_pos, y_pos2, p1name, p2name)
-                    print(P1DEAD, P2DEAD)
-                    print_board(board)
-        elif mode == "1":
+                # Print the coordinates of the players, as long as they are still alive
+                if P1DEAD == "F":
+                    print(f"Player 1 position: {x_pos}, {y_pos}.")
+                if P2DEAD == "F":
+                    print(f"Computer position: {x_pos2}, {y_pos2}.")
+
+                # Check if both users are near a mine, and display if player 1 is.
+                closeToMine = False
+                for i in mines:
+                    if abs(i[1] - x_pos) <= 1:
+                        if abs(i[0] - y_pos) <= 1:
+                            closeToMine = True
+
+                closeToMine2 = False
+                for i in mines:
+                    if abs(i[1] - x_pos2) <= 1:
+                        if abs(i[0] - y_pos2) <= 1:
+                            closeToMine2 = True
+
+                if closeToMine:
+                    print(f"{p1name} is close to a mine!")
+
+                # If either player has reached the end, display and add 1 point to their score
+                if x_pos >= 9:
+                    print(f"{p1name} reached the end first!")
+                    roundOver = "T"
+                    p1score += 1
+
+                if x_pos2 >= 9:
+                    print("Computer reached the end first!")
+                    roundOver = "T"
+                    p2score += 1
+
+                P1DEAD, P2DEAD = is_dead(x_pos, x_pos2, y_pos, y_pos2, p1name, p2name)
+                # Display the updated board
+                if P1DEAD == "T":
+                    if not point_awarded:
+                        p2score += 1
+                        point_awarded = True
+                if P2DEAD == "T":
+                    if not point_awarded2:
+                        p1score += 1
+                        point_awarded2 = True
+                print_board(board)
+
+        # If user has selected multiplayer, play with two playerss
+        if mode == "1":
+            started = False
             while roundOver == "F":
-                x_pos = 1
-                y_pos = 5
-                x_pos2 = 1
-                y_pos2 = 6
+                if not started:
+                    # Initialize variables
+                    x_pos = 0
+                    y_pos = 3
+                    x_pos2 = 0
+                    y_pos2 = 7
+                    BORDER_W = BORDER_N = 0
+                    BORDER_S = BORDER_E = 9
 
-                P1DEAD = "F"
-                P2DEAD = "F"
+                    # Display current round, as well as each player's score
+                    print("-" * 30)
+                    print(f"\nRound {ROUND}\n")
+                    print(f"{p1name}: {p1score} pts.")
+                    print(f"{p2name}: {p2score} pts.")
+                    print("-" * 30)
+                    started = True
 
-                print("-"*30)
-                print(f"\nRound {ROUND}\n")
-                print("-"*30)
-
-                while P1DEAD == "F" or P2DEAD == "F" or roundOver == "F":
-                    if P1DEAD == "F":
-                        move = input(f"{p1name}, which direction would you like to move? ")
+                # Check if player is alive before asking for input
+                # Loop until user has chosen a valid move
+                if P1DEAD == "F":
+                    moved = False
+                    while not moved:
+                        move = input(f"{p1name}, which direction would you like to move? ").upper()
                         if move == "W":
-                            board[x_pos][y_pos] = "."
-                            y_pos -= 1
-                            board[y_pos][x_pos] = "X"
+                            if y_pos > BORDER_N:
+                                board[x_pos][y_pos] = "."
+                                y_pos -= 1
+                                board[y_pos][x_pos] = "X"
+                                moved = True
+                            else:
+                                print("You're at the edge of the board!'")
                         elif move == "A":
-                            board[x_pos][y_pos] = "."
-                            x_pos -= 1
-                            board[y_pos][x_pos] = "X"
+                            if x_pos > BORDER_W:
+                                board[x_pos][y_pos] = "."
+                                x_pos -= 1
+                                board[y_pos][x_pos] = "X"
+                                moved = True
+                            else:
+                                print("You're at the edge of the board!'")
                         elif move == "S":
-                            board[x_pos][y_pos] = "."
-                            y_pos += 1
-                            board[y_pos][x_pos] = "X"
+                            if y_pos < BORDER_S:
+                                board[x_pos][y_pos] = "."
+                                y_pos += 1
+                                board[y_pos][x_pos] = "X"
+                                moved = True
+                            else:
+                                print("You're at the edge of the board!'")
                         elif move == "D":
-                            board[x_pos][y_pos] = "."
-                            x_pos += 1
-                            board[y_pos][x_pos] = "X"
-                            
-                        if x_pos2 >= 9:
-                            print(f"{p1name} reached the end first!")
-                            roundOver = "T"
-                            p1score += 1
-                            
-                    if P2DEAD == "F":
-                        move2 = input(f"{p2name}, which direction would you like to move? ")
-                        if move2 == "W":
-                            board[x_pos2][y_pos2] = "."
-                            y_pos2 -= 1
-                            board[y_pos2][x_pos2] = "O"
-                        elif move2 == "A":
-                            board[x_pos2][y_pos2] = "."
-                            x_pos2 -= 1
-                            board[y_pos2][x_pos2] = "O"
-                        elif move2 == "S":
-                            board[x_pos2][y_pos2] = "."
-                            y_pos2 += 1
-                            board[y_pos2][x_pos2] = "O"
-                        elif move2 == "D":
-                            board[x_pos2][y_pos2] = "."
-                            x_pos2 += 1
-                            board[y_pos2][x_pos2] = "O"
+                            if x_pos < BORDER_E:
+                                board[x_pos][y_pos] = "."
+                                x_pos += 1
+                                board[y_pos][x_pos] = "X"
+                                moved = True
+                            else:
+                                print("You're at the edge of the board!'")
 
-                        if x_pos2 >= 9:
-                            print(f"{p2name} reached the end first!")
-                            roundOver = "T"
-                            p2score += 1
-                            
-                    if P1DEAD == "F":
-                        print(f"Player 1 position: {x_pos}, {y_pos}.")
-                    if P2DEAD == "F":
-                        print(f"Player 2 position: {x_pos2}, {y_pos2}.")
-                    P1DEAD, P2DEAD = is_dead(x_pos, x_pos2, y_pos, y_pos2, p1name, p2name)
-                    print(P1DEAD, P2DEAD)
-                    print_board(board)
-            while playAgain != "Y" and playAgain != "N":
-                playAgain = input("Would you like to play again (y/n)? ").upper()
-                if playAgain == "Y":
-                    roundOver = "F"
-                    ROUND += 1
-                elif playAgain == "N":
-                    print("\nThank you for playing!")
-                else:
-                    print("Please choose either Y or N")
-                
+                # Ask user for move, as long as they are alive
+                # Loop until user chooses a valid move
+                if P2DEAD == "F":
+                    moved = False
+                    while not moved:
+                        move = input(f"{p2name}, which direction would you like to move? ").upper()
+                        if move == "W":
+                            if y_pos2 > BORDER_N:
+                                board[x_pos2][y_pos2] = "."
+                                y_pos2 -= 1
+                                board[y_pos2][x_pos2] = "O"
+                                moved = True
+                            else:
+                                print("You're at the edge of the board!'")
+                        elif move == "A":
+                            if x_pos2 > BORDER_W:
+                                board[x_pos2][y_pos2] = "."
+                                x_pos2 -= 1
+                                board[y_pos2][x_pos2] = "O"
+                                moved = True
+                            else:
+                                print("You're at the edge of the board!'")
+                        elif move == "S":
+                            if y_pos2 < BORDER_S:
+                                board[x_pos2][y_pos2] = "."
+                                y_pos2 += 1
+                                board[y_pos2][x_pos2] = "O"
+                                moved = True
+                            else:
+                                print("You're at the edge of the board!'")
+                        elif move == "D":
+                            if x_pos2 < BORDER_E:
+                                board[x_pos2][y_pos2] = "."
+                                x_pos2 += 1
+                                board[y_pos2][x_pos2] = "O"
+                                moved = True
+                            else:
+                                print("You're at the edge of the board!'")
 
+                # Print players' coordinates, if they are still alive
+                if P1DEAD == "F":
+                    print(f"Player 1 position: {x_pos}, {y_pos}.")
+                if P2DEAD == "F":
+                    print(f"Player 2 position: {x_pos2}, {y_pos2}.")
+
+                # Check if both players are near a mine, and display if they are
+                closeToMine = False
+                for i in mines:
+                    if abs(i[1] - x_pos) <= 1:
+                        if abs(i[0] - y_pos) <= 1:
+                            closeToMine = True
+                if closeToMine:
+                    print(f"{p1name} is close to a mine!")
+
+                closeToMine2 = False
+                for i in mines:
+                    if abs(i[1] - x_pos2) <= 1:
+                        if abs(i[0] - y_pos2) <= 1:
+                            closeToMine2 = True
+                if closeToMine2:
+                    print(f"{p2name} is close to a mine!")
+
+                # Check if a user has reached the end, and display a message if so
+
+                if x_pos >= 9:
+                    print(f"{p1name} reached the end first!")
+                    roundOver = "T"
+                    p1score += 1
+                if x_pos2 >= 9:
+                    print(f"{p2name} reached the end first!")
+                    roundOver = "T"
+                    p2score += 1
+                P1DEAD, P2DEAD = is_dead(x_pos, x_pos2, y_pos, y_pos2, p1name, p2name)
+                print_board(board)
+
+        # After round has ended, prompt user for if they would like to play again
+        playAgain = ""
+        while playAgain  != "N" and playAgain != "Y":
+            playAgain = input("Would you like to play again (y/n)? ").upper()
+            if playAgain == "Y":
+                board.clear()
+                roundOver = "F"
+                ROUND += 1
+            elif playAgain == "N":
+                print("\nThank you for playing!")
+                with open('highscores.txt', 'a') as f:
+                    print(f"{p1name},{str(p1score)}", file=f)
+                    if mode == "1":
+                        print(f"{p2name},{str(p2score)}", file=f)
+            else:
+                print("Please choose either Y or N")
+
+
+# Call the main function
 main()
-#f.close()
