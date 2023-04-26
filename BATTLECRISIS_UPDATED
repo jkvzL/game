@@ -1,5 +1,5 @@
 # Kai and Drew
-# April 19, 2023
+# April 25, 2023
 # Battlecrisis
 
 # Import libraries
@@ -34,6 +34,8 @@ def create_mines():
     for i in mines:
         i[1] = random.randint(2, 8)
         i[0] = random.randint(1, 9)
+    #for i in mines:
+    #    board[i[0]][i[1]] = "!"
 
 # Function to get the names of the players, either one or both, depending on which gamemode is chosen
 # Takes 1 parameter for gamemode (str), returns the names of the players
@@ -76,6 +78,8 @@ def set_difficulty(p1name):
             return 6
         elif difficulty == "C":
             return 10
+        elif difficulty == "T":
+            return 0
         else:
             print("Please choose A, B, or C.")
 
@@ -215,7 +219,7 @@ def main():
         if mode == "2":
             started = False
             # Loop until the round is over
-            while P1DEAD == "F" and roundOver == "F":
+            while roundOver == "F" and not (P1DEAD == "T" and P2DEAD == "T"):
                 if not started:
                     # Initialize variables
                     x_pos = 0
@@ -290,7 +294,7 @@ def main():
                         else:
                             direc = random.randint(1,4)
                         if direc == 1:
-                            if y_pos > BORDER_N:
+                            if y_pos2 > BORDER_N:
                                 s(0.1)
                                 print("Computer chose: 'W'")
                                 board[x_pos2][y_pos2] = "."
@@ -298,7 +302,7 @@ def main():
                                 board[y_pos2][x_pos2] = "O"
                                 moved = True
                         elif direc == 2:
-                            if x_pos > BORDER_W:
+                            if x_pos2 > BORDER_W:
                                 s(0.1)
                                 print("Computer chose: 'A'")
                                 board[x_pos2][y_pos2] = "."
@@ -306,7 +310,7 @@ def main():
                                 board[y_pos2][x_pos2] = "O"
                                 moved = True
                         elif direc == 3:
-                            if y_pos < BORDER_S:
+                            if y_pos2 < BORDER_S:
                                 s(0.1)
                                 print("Computer chose: 'S'")
                                 board[x_pos2][y_pos2] = "."
@@ -320,6 +324,8 @@ def main():
                             x_pos2 += 1
                             board[y_pos2][x_pos2] = "O"
                             moved = True
+                    if P1DEAD == "T":
+                        s(1)
 
                 # Print the coordinates of the players, as long as they are still alive
                 if P1DEAD == "F":
@@ -376,6 +382,8 @@ def main():
                     y_pos = 3
                     x_pos2 = 0
                     y_pos2 = 7
+                    point_awarded = False
+                    point_awarded2 = False
                     BORDER_W = BORDER_N = 0
                     BORDER_S = BORDER_E = 9
 
@@ -487,6 +495,16 @@ def main():
                             closeToMine2 = True
                 if closeToMine2:
                     print(f"{p2name} is close to a mine!")
+
+                # If a player dies, give one point to the opponent
+                if P1DEAD == "T":
+                    if not point_awarded:
+                        p2score += 1
+                        point_awarded = True
+                if P2DEAD == "T":
+                    if not point_awarded2:
+                        p1score += 1
+                        point_awarded2 = True
 
                 # Check if a user has reached the end, and display a message if so
 
